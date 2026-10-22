@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Administration — KOUZ HOUS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/page.css" />
+  <link rel="stylesheet" href="/css/chat.css" />
+</head>
+<body class="page-body chat-body">
+  <header class="page-topbar">
+    <a href="/dashboard" class="page-back">← Dashboard</a>
+    <h1>Administration</h1>
+    <button type="button" class="page-back" id="admin-logout" style="display:none">Quitter</button>
+  </header>
+
+  <div class="admin-login" id="admin-login">
+    <input type="password" id="admin-password" placeholder="Mot de passe administrateur" />
+    <button type="button" id="admin-login-btn">Se connecter</button>
+    <p id="admin-login-error" style="color:#f0a9ab;font-size:0.8rem;margin:0"></p>
+  </div>
+
+  <div class="chat-wrap" id="admin-panel" style="display:none">
+    <div id="conv-view">
+      <ul class="conv-list" id="conv-list"></ul>
+    </div>
+
+    <div class="admin-chat-head" id="admin-chat-head" style="display:none">
+      <button type="button" id="admin-back-to-list">← Retour</button>
+      <b id="admin-chat-user"></b>
+    </div>
+    <div class="chat-messages" id="admin-messages" style="display:none"></div>
+    <div class="chat-preview" id="admin-preview"></div>
+    <div class="chat-inputbar" id="admin-inputbar" style="display:none">
+      <button type="button" class="chat-btn" id="admin-attach" title="Envoyer une image">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+      </button>
+      <input type="text" id="admin-text" placeholder="Répondre…" />
+      <button type="button" class="chat-btn send" id="admin-send">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+      <input type="file" id="admin-image" accept="image/*" hidden />
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var loginView = document.getElementById('admin-login');
+      var panel = document.getElementById('admin-panel');
+      var convView = document.getElementById('conv-view');
+      var convList = document.getElementById('conv-list');
+      var chatHead = document.getElementById('admin-chat-head');
+      var chatUser = document.getElementById('admin-chat-user');
+      var msgEl = document.getElementById('admin-messages');
+      var inputbar = document.getElementById('admin-inputbar');
+      var textInput = document.getElementById('admin-text');
+      var imageInput = document.getElementById('admin-image');
+      var attachBtn = document.getElementById('admin-attach');
+      var sendBtn = document.getElementById('admin-send');
+      var preview = document.getElementById('admin-preview');
+      var logoutBtn = document.getElementById('admin-logout');
+      var currentUserId = null;
+      var pendingImage = null;
+      var lastMsgId = 0;
+
+      function esc(s) {
+        return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
+          return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+        });
+      }
+
+      function renderMessages(list) {
+        if (!list.length) {
+          msgEl.innerHTML = '<div class="chat-empty">Aucun message.</div>';
+          return;
+        }
+        msgEl.innerHTML = list.map(function (m) {
+          var time = new Date(m.createdAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+          var img = m.imageUrl ? '<img src="' + m.imageUrl + '" alt="image" />' : '';
+          var text = m.content ? '<div>' + esc(m.content) + '</div>' : '';
+          return '<div class="chat-msg ' + m.sender + '">' + text + img + '<div class="meta">' + time + '</div></div>';
+        }).join('');
+        msgEl.scrollTop = msgEl.scrollHeight;
+      }
+
+      function showLogin() {
+        loginView.style.display = 'flex';
+        panel.style.display = 'none';
+        logoutBtn.style.display = 'none';
+      }
+      function showPanel() {
+        loginView.style.display = 'none';
+        panel.style.display = 'flex';
+        logoutBtn.style.display = 'inline-flex';
+      }
+
+      async function checkStatus() {
+        try {
+          var res = await fetch('/api/admin/status');
+          var data = await res.json();
+          if (data.isAdmin) { showPanel(); loadConversations(); } else { showLogin(); }
+        } catch (e) { showLogin(); }
+      }
+
+      async function login() {
+        var pw = document.getElementById('admin-password').value;
+        var errEl = document.getElementById('admin-login-error');
+        errEl.textContent = '';
+        try {
+          var res = await fetch('/api/admin/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password: pw }),
+          });
+          var data = await res.json();
+          if (!res.ok) { errEl.textContent = data.error || 'Erreur.'; return; }
+          document.getElementById('admin-password').value = '';
+          showPanel();
+          loadConversations();
+        } catch (e) { errEl.textContent = 'Erreur réseau.'; }
+      }
+
+      async function loadConversations() {
+        try {
+          var res = await fetch('/api/admin/conversations');
+          if (res.status === 401) { showLogin(); return; }
+          var data = await res.json();
+          var convs = data.conversations || [];
+          if (!convs.length) {
+            convList.innerHTML = '<li class="conv-item"><span style="color:#7e958b;font-size:0.85rem">Aucun message pour le moment.</span></li>';
+            return;
+          }
+          convList.innerHTML = convs.map(function (c) {
+            var initials = (c.country || '?').slice(0, 1).toUpperCase();
+            var preview = c.lastContent || (c.lastImage ? '🖼 Image' : '');
+            var unread = c.unread > 0 ? '<span class="conv-unread">' + c.unread + '</span>' : '';
+            return '<li class="conv-item" data-id="' + c.userId + '">' +
+              '<span class="conv-avatar">' + initials + '</span>' +
+              '<div class="conv-info"><b>' + c.phone + '</b><span>' + esc(preview) + '</span></div>' +
+              unread + '</li>';
+          }).join('');
+          convList.querySelectorAll('.conv-item[data-id]').forEach(function (item) {
+            item.addEventListener('click', function () { openConversation(parseInt(item.dataset.id, 10)); });
+          });
+        } catch (e) {}
+      }
+
+      async function openConversation(userId) {
+        currentUserId = userId;
+        lastMsgId = 0;
+        convView.style.display = 'none';
+        chatHead.style.display = 'flex';
+        msgEl.style.display = 'flex';
+        inputbar.style.display = 'flex';
+        chatUser.textContent = 'Conversation #' + userId;
+        await loadMessages();
+      }
+
+      function backToList() {
+        currentUserId = null;
+        chatHead.style.display = 'none';
+        msgEl.style.display = 'none';
+        inputbar.style.display = 'none';
+        convView.style.display = 'block';
+        loadConversations();
+      }
+
+      async function loadMessages() {
+        if (!currentUserId) return;
+        try {
+          var res = await fetch('/api/admin/messages?userId=' + currentUserId);
+          var data = await res.json();
+          var list = data.messages || [];
+          var newLast = list.length ? list[list.length - 1].id : 0;
+          if (newLast !== lastMsgId) { lastMsgId = newLast; renderMessages(list); }
+        } catch (e) {}
+      }
+
+      function compressImage(file, maxSize) {
+        return new Promise(function (resolve, reject) {
+          var reader = new FileReader();
+          reader.onload = function (e) {
+            var img = new Image();
+            img.onload = function () {
+              var w = img.width, h = img.height;
+              if (w > h && w > maxSize) { h = Math.round(h * maxSize / w); w = maxSize; }
+              else if (h > maxSize) { w = Math.round(w * maxSize / h); h = maxSize; }
+              var canvas = document.createElement('canvas');
+              canvas.width = w; canvas.height = h;
+              canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+              resolve(canvas.toDataURL('image/jpeg', 0.7));
+            };
+            img.onerror = reject;
+            img.src = e.target.result;
+          };
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+      }
+
+      function clearPreview() {
+        preview.innerHTML = '';
+        preview.style.display = 'none';
+      }
+
+      async function sendReply() {
+        if (!currentUserId) return;
+        var text = textInput.value.trim();
+        if (!text && !pendingImage) return;
+        sendBtn.disabled = true;
+        try {
+          var res = await fetch('/api/admin/messages', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId: currentUserId, content: text, image: pendingImage }),
+          });
+          var data = await res.json();
+          if (!res.ok) { alert(data.error || 'Envoi impossible.'); return; }
+          textInput.value = '';
+          pendingImage = null;
+          clearPreview();
+          lastMsgId = 0;
+          await loadMessages();
+          await loadConversations();
+        } catch (e) {
+          alert('Erreur réseau.');
+        } finally {
+          sendBtn.disabled = false;
+        }
+      }
+
+      document.getElementById('admin-login-btn').addEventListener('click', login);
+      document.getElementById('admin-password').addEventListener('keydown', function (e) { if (e.key === 'Enter') login(); });
+      logoutBtn.addEventListener('click', async function () {
+        await fetch('/api/admin/logout', { method: 'POST' });
+        showLogin();
+      });
+      document.getElementById('admin-back-to-list').addEventListener('click', backToList);
+      attachBtn.addEventListener('click', function () { imageInput.click(); });
+      imageInput.addEventListener('change', async function () {
+        var file = imageInput.files[0];
+        if (!file) return;
+        try {
+          pendingImage = await compressImage(file, 800);
+          preview.innerHTML = '<img src="' + pendingImage + '" alt="aperçu" /><button type="button" id="admin-preview-remove">✕</button>';
+          preview.style.display = 'flex';
+          document.getElementById('admin-preview-remove').addEventListener('click', function () {
+            pendingImage = null; clearPreview();
+          });
+        } catch (e) { alert('Image illisible.'); }
+      });
+      sendBtn.addEventListener('click', sendReply);
+      textInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') sendReply(); });
+
+      checkStatus();
+      setInterval(function () {
+        if (currentUserId) loadMessages();
+        loadConversations();
+      }, 5000);
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Tableau de bord — KOUZ HOUS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/css/dashboard.css?v=28" />
+</head>
+<body class="dash-body">
+  <!-- ===== Arrière-plan animé (isolé du contenu) ===== -->
+  <div class="dash-bg" aria-hidden="true">
+    <div class="dash-bg-slideshow">
+      <img class="dash-bg-slide active" src="/images/moto1.jpg" alt="" />
+      <img class="dash-bg-slide" src="/images/velo.jpg" alt="" />
+      <img class="dash-bg-slide" src="/images/casque.jpg" alt="" />
+      <img class="dash-bg-slide" src="/images/rol.jpg" alt="" />
+      <img class="dash-bg-slide" src="/images/pous.jpg" alt="" />
+      <img class="dash-bg-slide" src="/images/vent.jpg" alt="" />
+    </div>
+    <div class="dash-bg-overlay"></div>
+  </div>
+
+  <!-- ===== Barre supérieure (notifications + profil) ===== -->
+  <header class="dash-topbar">
+    <div class="dash-topbar-inner">
+      <a href="#accueil" class="dash-topbar-brand">
+        <span class="dash-topbar-mark">K</span>
+        <span class="dash-topbar-name">KOUZ <b>HOUS</b></span>
+      </a>
+      <div class="dash-topbar-actions">
+        <button type="button" class="dash-notif" id="notif-btn" aria-label="Notifications">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+          </svg>
+          <span class="dash-notif-badge" id="notif-badge" hidden>0</span>
+        </button>
+        <button type="button" class="dash-user" id="dash-user-btn" aria-label="Profil">
+          <span class="dash-user-avatar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </span>
+          <span class="dash-user-name" id="user-name">—</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== NAVBAR (toujours visible) ===== -->
+  <nav class="dash-nav">
+    <div class="dash-nav-inner">
+      <a href="#accueil" class="dash-logo">
+        <span class="dash-logo-mark">K</span>
+        <span class="dash-logo-text">KOUZ <b>HOUS</b></span>
+      </a>
+
+      <ul class="dash-links" id="dash-links">
+        <li><a href="#accueil" class="dash-link active" data-section="accueil">
+          <svg class="dash-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          <span class="dash-link-label">Accueil</span>
+        </a></li>
+        <li><a href="#team" class="dash-link" data-section="team">
+          <svg class="dash-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <span class="dash-link-label">Team</span>
+        </a></li>
+        <li><a href="#produits" class="dash-link" data-section="produits">
+          <svg class="dash-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+          <span class="dash-link-label">Produits</span>
+        </a></li>
+        <li><a href="#historique" class="dash-link" data-section="historique">
+          <svg class="dash-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span class="dash-link-label">Historique</span>
+        </a></li>
+        <li><a href="#profile" class="dash-link" data-section="profile">
+          <svg class="dash-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <span class="dash-link-label">Profile</span>
+        </a></li>
+      </ul>
+
+      <div class="dash-nav-right">
+        <span class="nav-user" id="nav-user">👤</span>
+        <button type="button" class="dash-logout" id="logout-btn">Déconnexion</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="dash-main">
+    <!-- ===================== ACCUEIL ===================== -->
+    <section id="accueil" class="dash-section active">
+      <div class="welcome-card">
+        <div class="welcome-img"><img src="/images/moto1.jpg" alt="" /></div>
+        <div class="welcome-text">
+          <h1>Bonjour, <span id="welcome-name">investisseur</span> 👋</h1>
+          <p>Bienvenue dans votre espace KOUZ HOUS. Gérez votre capital et faites-le fructifier.</p>
+        </div>
+        <div class="welcome-badge">
+          <span class="welcome-flag" id="welcome-flag">🌍</span>
+          <span id="welcome-loc">—</span>
+        </div>
+      </div>
+
+      <!-- Solde : dépôt + revenu -->
+      <div class="balance-grid">
+        <article class="balance-card depot">
+          <div class="balance-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="5" width="18" height="14" rx="2" />
+              <line x1="3" y1="10" x2="21" y2="10" />
+              <line x1="12" y1="12" x2="12" y2="17" />
+              <line x1="9" y1="14.5" x2="12" y2="17.5" />
+              <line x1="15" y1="14.5" x2="12" y2="17.5" />
+            </svg>
+          </div>
+          <div class="balance-info">
+            <span class="balance-label">Solde de dépôt</span>
+            <span class="balance-amount"><span id="depot-balance">0</span></span>
+            <span class="balance-unit">FCFA</span>
+          </div>
+          <span class="balance-spark"></span>
+        </article>
+
+        <article class="balance-card revenu">
+          <div class="balance-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
+              <polyline points="16 7 22 7 22 13" />
+            </svg>
+          </div>
+          <div class="balance-info">
+            <span class="balance-label">Revenu</span>
+            <span class="balance-amount"><span id="revenu-balance">0</span></span>
+            <span class="balance-unit">FCFA</span>
+          </div>
+          <span class="balance-spark"></span>
+        </article>
+      </div>
+
+      <!-- Actions rapides : dépôt / retrait -->
+      <div class="dash-actions">
+        <a href="/depot" class="profile-action deposit">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M19 12l-7 7-7-7"/></svg>
+          Dépôt
+        </a>
+        <button type="button" class="profile-action withdraw" id="dash-withdraw-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg>
+          Retrait
+        </button>
+      </div>
+
+      <!-- Bannière défilante (dépôts / retraits) -->
+      <div class="ticker">
+        <div class="ticker-head">
+          <span class="ticker-dot"></span> Activité en direct
+        </div>
+        <div class="ticker-window">
+          <div class="ticker-track" id="ticker-track"></div>
+        </div>
+      </div>
+
+      <!-- Roue de la chance -->
+      <section class="wheel-card">
+        <div class="wheel-layout">
+          <div class="wheel-stage">
+            <div class="wheel-pointer"></div>
+            <canvas id="wheel-canvas" width="300" height="300"></canvas>
+          </div>
+          <div class="wheel-side">
+            <h2 class="wheel-title">Roue de la chance</h2>
+            <p class="wheel-desc">Tournez la roue et tentez de gagner des bonus FCFA chaque jour.</p>
+            <button type="button" class="spin-btn" id="spin-btn">Tourner la roue</button>
+            <p class="wheel-result" id="wheel-result"></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Infos + images -->
+      <section class="info-card">
+        <div class="info-card-head">
+          <h2>À propos de KOUZ HOUS</h2>
+          <p>Une plateforme d'investissement FCFA pensée pour l'Afrique de l'Ouest.</p>
+        </div>
+        <div class="info-grid">
+          <div class="info-media">
+            <img src="/images/moto1.jpg" alt="KOUZ HOUS" />
+            <img src="/images/velo.jpg" alt="KOUZ HOUS" />
+          </div>
+          <div class="info-text">
+            <p>KOUZ HOUS accompagne ses membres avec des solutions de <strong>dépôt</strong> et de <strong>revenus</strong> accessibles via <strong>Mobile Money</strong>.</p>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <!-- ===================== TEAM ===================== -->
+    <section id="team" class="dash-section">
+      <div class="team-hero">
+        <div class="team-hero-content">
+          <h2>Mon équipe</h2>
+          <p>Développez votre réseau et suivez votre progression avec KOUZ HOUS.</p>
+        </div>
+        <div class="team-hero-img"><img src="/images/moto1.jpg" alt="" /></div>
+      </div>
+
+      <div class="team-referral">
+        <h3>Invitez. Partagez. Développez votre équipe.</h3>
+        <div class="team-referral-link" id="team-link">Chargement…</div>
+        <div class="team-referral-actions">
+          <button type="button" class="team-btn primary" id="team-copy-btn">Copier mon lien</button>
+          <button type="button" class="team-btn" id="team-share-btn">Partager</button>
+        </div>
+        <p class="team-copy-feedback" id="team-copy-feedback"></p>
+      </div>
+
+      <div class="team-stats">
+        <div class="team-stat">
+          <span class="team-stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+          <b id="stat-team">—</b>
+          <span class="team-stat-label">Membres de mon équipe</span>
+        </div>
+        <div class="team-stat">
+          <span class="team-stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg></span>
+          <b id="stat-direct">—</b>
+          <span class="team-stat-label">Filleuls directs</span>
+        </div>
+        <div class="team-stat">
+          <span class="team-stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></span>
+          <b id="stat-active">—</b>
+          <span class="team-stat-label">Membres actifs</span>
+        </div>
+        <div class="team-stat">
+          <span class="team-stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg></span>
+          <b id="stat-commissions">—</b>
+          <span class="team-stat-label">Commissions générées</span>
+        </div>
+      </div>
+
+      <div class="team-levels">
+        <h3>Commissions de parrainage</h3>
+        <div class="team-level-grid" id="team-level-grid"></div>
+      </div>
+
+      <div class="team-members">
+        <div class="team-members-head">
+          <h3>Les membres de mon équipe</h3>
+          <input type="search" id="team-search" placeholder="Rechercher un numéro…" />
+        </div>
+        <div class="team-filter" id="team-filter">
+          <button type="button" class="team-chip active" data-level="all">Tous</button>
+          <button type="button" class="team-chip" data-level="1">Niveau 1</button>
+          <button type="button" class="team-chip" data-level="2">Niveau 2</button>
+          <button type="button" class="team-chip" data-level="3">Niveau 3</button>
+        </div>
+        <div class="team-members-list" id="team-members-list"></div>
+      </div>
+    </section>
+
+    <!-- ===================== PRODUITS ===================== -->
+    <section id="produits" class="dash-section">
+      <div class="prod-hero">
+        <div class="prod-hero-content">
+          <h2>Découvrez nos produits</h2>
+          <p>Choisissez le produit qui correspond à votre budget et consultez ses conditions avant de vous lancer.</p>
+        </div>
+        <div class="prod-hero-img"><img src="/images/moto4.jpg" alt="" /></div>
+      </div>
+
+      <div class="prod-grid" id="prod-grid"></div>
+    </section>
+
+    <!-- ===================== HISTORIQUE ===================== -->
+    <section id="historique" class="dash-section">
+      <div class="hist-hero">
+        <div class="hist-hero-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div class="hist-hero-text">
+          <h2>Mon historique</h2>
+          <p>Retrouvez toutes vos opérations et suivez leur évolution.</p>
+        </div>
+      </div>
+
+      <div class="hist-summary">
+        <div class="hist-sum-card">
+          <span class="hist-sum-icon deposit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span>
+          <span class="hist-sum-label">Total des dépôts</span>
+          <b id="hist-deposits">—</b>
+        </div>
+        <div class="hist-sum-card">
+          <span class="hist-sum-icon withdrawal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></span>
+          <span class="hist-sum-label">Total des retraits</span>
+          <b id="hist-withdrawals">—</b>
+        </div>
+        <div class="hist-sum-card">
+          <span class="hist-sum-icon revenue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></span>
+          <span class="hist-sum-label">Revenus reçus</span>
+          <b id="hist-revenues">—</b>
+        </div>
+        <div class="hist-sum-card">
+          <span class="hist-sum-icon commission"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+          <span class="hist-sum-label">Commissions reçues</span>
+          <b id="hist-commissions">—</b>
+        </div>
+      </div>
+
+      <div class="hist-filters">
+        <div class="hist-chips" id="hist-chips">
+          <button type="button" class="hist-chip active" data-type="all">Toutes</button>
+          <button type="button" class="hist-chip" data-type="deposit">Dépôts</button>
+          <button type="button" class="hist-chip" data-type="withdrawal">Retraits</button>
+          <button type="button" class="hist-chip" data-type="revenue">Revenus</button>
+          <button type="button" class="hist-chip" data-type="commission">Commissions</button>
+          <button type="button" class="hist-chip" data-type="purchase">Achats</button>
+        </div>
+        <div class="hist-controls">
+          <input type="search" id="hist-search" placeholder="Rechercher une référence…" />
+          <select id="hist-status">
+            <option value="all">Tous les statuts</option>
+            <option value="success">Réussi</option>
+            <option value="pending">En attente</option>
+            <option value="failed">Échoué</option>
+            <option value="refused">Refusé</option>
+            <option value="cancelled">Annulé</option>
+          </select>
+          <select id="hist-period">
+            <option value="all">Toute la période</option>
+            <option value="7">7 derniers jours</option>
+            <option value="30">30 derniers jours</option>
+            <option value="90">90 derniers jours</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="hist-list" id="hist-list"></div>
+    </section>
+
+    <!-- ===================== PROFILE ===================== -->
+    <section id="profile" class="dash-section">
+      <div class="profile-hero">
+        <div class="profile-hero-text">
+          <h2>Profil</h2>
+          <p>Vos informations et nos services.</p>
+        </div>
+        <div class="profile-hero-img"><img src="/images/velo.jpg" alt="" /></div>
+      </div>
+
+      <div class="profile-card">
+        <div class="profile-avatar">👤</div>
+        <div class="profile-info">
+          <h3 id="profile-country">—</h3>
+          <p id="profile-phone">—</p>
+          <p class="profile-note">Membre KOUZ HOUS · Compte sécurisé</p>
+        </div>
+      </div>
+
+      <div class="profile-actions">
+        <a href="/depot" class="profile-action deposit">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M19 12l-7 7-7-7"/></svg>
+          Dépôt
+        </a>
+        <button type="button" class="profile-action withdraw" id="withdraw-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg>
+          Retrait
+        </button>
+      </div>
+
+      <div class="profile-menu">
+        <a href="/faq" class="profile-menu-item">
+          <span class="profile-menu-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
+          <span class="profile-menu-label">FAQ</span>
+          <span class="profile-menu-chevron">›</span>
+        </a>
+        <a href="/conditions" class="profile-menu-item">
+          <span class="profile-menu-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span>
+          <span class="profile-menu-label">Conditions générales</span>
+          <span class="profile-menu-chevron">›</span>
+        </a>
+        <a href="/a-propos" class="profile-menu-item">
+          <span class="profile-menu-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></span>
+          <span class="profile-menu-label">À propos</span>
+          <span class="profile-menu-chevron">›</span>
+        </a>
+        <a href="/espace-client" class="profile-menu-item">
+          <span class="profile-menu-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+          <span class="profile-menu-label">Espace client</span>
+          <span class="profile-menu-chevron">›</span>
+        </a>
+        <a href="/admin" class="profile-menu-item">
+          <span class="profile-menu-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
+          <span class="profile-menu-label">Espace admin</span>
+          <span class="profile-menu-chevron">›</span>
+        </a>
+        <a href="/vip" class="profile-menu-item">
+          <span class="profile-menu-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg></span>
+          <span class="profile-menu-label">Programme VIP</span>
+          <span class="profile-menu-chevron">›</span>
+        </a>
+        <button type="button" class="profile-menu-item danger" id="profile-logout">
+          <span class="profile-menu-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></span>
+          <span class="profile-menu-label">Déconnexion</span>
+          <span class="profile-menu-chevron">›</span>
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== Popup d'informations (affiché à chaque visite) ===== -->
+  <div class="dash-modal" id="info-modal" aria-hidden="true">
+    <div class="dash-modal-backdrop" id="info-modal-backdrop"></div>
+    <div class="dash-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="info-modal-title">
+      <button type="button" class="dash-modal-close" id="info-modal-close" aria-label="Fermer">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+
+      <div class="dash-modal-img"><img src="/images/moto1.jpg" alt="" /></div>
+
+      <div class="dash-modal-body">
+        <div class="dash-modal-head">
+          <span class="dash-modal-brand">KOUZ <b>HOUS</b></span>
+          <h2 id="info-modal-title">Les informations importantes</h2>
+        </div>
+
+        <!-- Bonus d'inscription -->
+        <div class="dash-bonus">
+          <div class="dash-bonus-visual">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 12 20 22 4 22 4 12" />
+              <rect x="2" y="7" width="20" height="5" />
+              <line x1="12" y1="22" x2="12" y2="7" />
+              <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z" />
+              <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z" />
+            </svg>
+          </div>
+          <div class="dash-bonus-info">
+            <span class="dash-bonus-tag">BONUS D'INSCRIPTION</span>
+            <span class="dash-bonus-amount">700 FCFA</span>
+          </div>
+        </div>
+
+        <!-- Commissions de parrainage -->
+        <div class="dash-modal-section">
+          <h3>Commissions de parrainage</h3>
+          <div class="dash-ref-row"><span>Niveau 1</span><b>10 %</b></div>
+          <div class="dash-ref-row"><span>Niveau 2</span><b>3 %</b></div>
+          <div class="dash-ref-row"><span>Niveau 3</span><b>1 %</b></div>
+        </div>
+
+        <!-- Frais de retrait -->
+        <div class="dash-fee-card">
+          <span>Frais de retrait</span>
+          <b>10 %</b>
+        </div>
+      </div>
+
+      <div class="dash-modal-footer">
+        <button type="button" class="dash-modal-cta" id="info-modal-cta">Compris, continuer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Détail d'opération ===== -->
+  <div class="hist-detail" id="hist-detail" aria-hidden="true">
+    <div class="hist-detail-backdrop" id="hist-detail-backdrop"></div>
+    <div class="hist-detail-dialog" role="dialog" aria-modal="true">
+      <button type="button" class="hist-detail-close" id="hist-detail-close" aria-label="Fermer">✕</button>
+      <div id="hist-detail-body"></div>
+    </div>
+  </div>
+
+  <!-- ===== Panneau de notifications ===== -->
+  <div class="notif-panel" id="notif-panel" aria-hidden="true">
+    <div class="notif-panel-backdrop" id="notif-panel-backdrop"></div>
+    <div class="notif-panel-dialog" role="dialog" aria-modal="true">
+      <div class="notif-panel-head">
+        <h3>Notifications</h3>
+        <button type="button" class="notif-panel-close" id="notif-panel-close" aria-label="Fermer">✕</button>
+      </div>
+      <div class="notif-panel-body" id="notif-panel-body"></div>
+    </div>
+  </div>
+
+  <!-- ===== Confirmation d'achat ===== -->
+  <div class="buy-modal" id="buy-modal" aria-hidden="true">
+    <div class="buy-modal-backdrop" id="buy-modal-backdrop"></div>
+    <div class="buy-modal-dialog" role="dialog" aria-modal="true">
+      <h3 class="buy-modal-title">Confirmer l'achat</h3>
+      <p class="buy-modal-text">Acheter <b id="buy-modal-product">—</b> pour</p>
+      <div class="buy-modal-price" id="buy-modal-price">—</div>
+      <p class="buy-modal-note">Le montant sera débité de votre solde dépôt.</p>
+      <div class="buy-modal-actions">
+        <button type="button" class="buy-modal-cancel" id="buy-modal-cancel">Annuler</button>
+        <button type="button" class="buy-modal-confirm" id="buy-modal-confirm">Oui</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Toast ===== -->
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <!-- ===== Page Retrait ===== -->
+  <div class="withdraw-overlay" id="withdraw-overlay" aria-hidden="true">
+    <div class="withdraw-sheet">
+      <div class="withdraw-head">
+        <div class="withdraw-head-img"><img src="/images/vent.jpg" alt="" /></div>
+        <div class="withdraw-head-text">
+          <h2>Effectuer un retrait</h2>
+          <p>Retirez vos revenus disponibles directement vers votre portefeuille Mobile Money.</p>
+        </div>
+        <button type="button" class="withdraw-close" id="withdraw-close" aria-label="Fermer">✕</button>
+      </div>
+
+      <div class="withdraw-body">
+        <div class="withdraw-balance">
+          <span class="withdraw-balance-label">Mon revenu disponible</span>
+          <b class="withdraw-balance-value" id="withdraw-balance">—</b>
+        </div>
+
+        <div class="withdraw-section">
+          <h3>Pays</h3>
+          <div class="withdraw-countries" id="withdraw-countries"></div>
+        </div>
+
+        <div class="withdraw-section">
+          <h3>Service Mobile Money</h3>
+          <div class="withdraw-services" id="withdraw-services"></div>
+        </div>
+
+        <div class="withdraw-section">
+          <h3>Montant & destinataire</h3>
+          <label class="withdraw-field">
+            <span>Montant (FCFA)</span>
+            <input type="number" id="withdraw-amount" inputmode="numeric" min="1600" placeholder="Ex : 10 000" />
+          </label>
+          <label class="withdraw-field">
+            <span>Numéro du portefeuille</span>
+            <input type="tel" id="withdraw-phone" inputmode="tel" placeholder="Ex : 90 12 34 56" />
+          </label>
+        </div>
+
+        <div class="withdraw-recap" id="withdraw-recap"></div>
+
+        <button type="button" class="withdraw-submit" id="withdraw-submit">Confirmer le retrait</button>
+        <p class="withdraw-status" id="withdraw-status"></p>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/common.js"></script>
+  <script src="/js/dashboard.js?v=12"></script>
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Créer un compte — KOUZ HOUS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <div class="auth-layout">
+    <aside class="auth-visual">
+      <div class="slideshow">
+        <img class="slide active" src="/images/moto1.jpg" alt="" />
+        <img class="slide" src="/images/velo.jpg" alt="" />
+        <img class="slide" src="/images/casque.jpg" alt="" />
+        <img class="slide" src="/images/rol.jpg" alt="" />
+        <img class="slide" src="/images/pous.jpg" alt="" />
+        <img class="slide" src="/images/vent.jpg" alt="" />
+      </div>
+      <div class="auth-visual-overlay"></div>
+      <div class="auth-brand">
+        <div class="brand-logo">K</div>
+        <h1 class="brand-title">KOUZ <span class="accent">HOUS</span></h1>
+        <p class="brand-tagline">Investissez en FCFA et développez votre capital avec des rendements fiables.</p>
+        <div class="brand-badges">
+          <span class="badge"><span class="dot"></span> Paiement Mobile Money</span>
+          <span class="badge"><span class="dot"></span> Capital en FCFA</span>
+          <span class="badge"><span class="dot"></span> 6 pays disponibles</span>
+        </div>
+      </div>
+    </aside>
+
+    <main class="auth-form-panel">
+      <div class="auth-form-inner">
+        <div class="auth-form-head">
+          <h2>Créer un compte</h2>
+          <p>Rejoignez KOUZ HOUS et commencez à investir dès aujourd'hui.</p>
+        </div>
+
+        <form id="register-form" novalidate>
+          <div class="field">
+            <label for="country">Pays</label>
+            <select class="control" id="country" name="country" required></select>
+          </div>
+
+          <div class="field">
+            <label for="phone">Numéro de téléphone</label>
+            <div class="phone-group">
+              <span class="phone-prefix" id="phone-prefix">+228</span>
+              <input class="control" type="tel" id="phone" name="phone" placeholder="90 12 34 56" autocomplete="tel" required />
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="password">Mot de passe</label>
+            <div class="password-wrap">
+              <input class="control" type="password" id="password" name="password" placeholder="••••••••" autocomplete="new-password" required />
+              <button type="button" class="toggle-pass" aria-label="Afficher le mot de passe">👁</button>
+            </div>
+            <p class="field-hint">Au moins 6 caractères.</p>
+          </div>
+
+          <div class="field">
+            <label for="confirm-password">Confirmer le mot de passe</label>
+            <div class="password-wrap">
+              <input class="control" type="password" id="confirm-password" name="confirm-password" placeholder="••••••••" autocomplete="new-password" required />
+              <button type="button" class="toggle-pass" aria-label="Afficher le mot de passe">👁</button>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="invitation-code">Code d'invitation</label>
+            <input class="control" type="text" id="invitation-code" name="invitation-code" placeholder="Ex. KH-2024" required />
+          </div>
+
+          <label class="checkbox">
+            <input type="checkbox" id="terms" name="terms" />
+            <span>J'accepte les <a href="#">conditions d'utilisation</a> et la politique de confidentialité.</span>
+          </label>
+
+          <button type="submit" class="btn-primary" id="submit-btn">S'inscrire</button>
+          <p class="form-message" id="form-message"></p>
+        </form>
+
+        <p class="auth-switch">Déjà un compte ? <a href="/login">Se connecter</a></p>
+      </div>
+    </main>
+  </div>
+
+  <script src="/js/common.js"></script>
+  <script src="/js/register.js"></script>
+</body>
+</html>

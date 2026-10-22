@@ -1,0 +1,131 @@
+/* ============================================================
+   KOUZ HOUS — Pages d'information (FAQ, conditions, à propos…)
+   ============================================================ */
+:root {
+  --green-400: #34d399;
+  --green-500: #10b981;
+  --gold: #f6b93b;
+}
+
+* { box-sizing: border-box; }
+
+.page-body {
+  margin: 0;
+  min-height: 100vh;
+  background: linear-gradient(180deg, #041f17 0%, #06231b 45%, #04120d 100%);
+  color: #eaf5ef;
+  font-family: 'Poppins', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  padding-bottom: 40px;
+}
+
+.page-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  padding-top: calc(14px + env(safe-area-inset-top));
+  background: rgba(6, 32, 24, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(16, 185, 129, 0.16);
+}
+.page-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #cfe3da;
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: background .2s ease, color .2s ease;
+}
+.page-back:hover { background: rgba(255, 255, 255, 0.14); color: #fff; }
+.page-topbar h1 { margin: 0; font-size: 1.12rem; font-weight: 700; color: #fff; flex: 1; text-align: center; padding-right: 8px; }
+
+.page-content {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 20px 18px;
+}
+
+.page-section { margin-bottom: 18px; }
+.page-section h2 { margin: 0 0 8px; font-size: 1.05rem; color: #fff; }
+.page-section p { margin: 0; color: #bcd6cb; font-size: 0.88rem; line-height: 1.6; }
+.page-section ul { margin: 8px 0 0; padding-left: 18px; color: #bcd6cb; font-size: 0.88rem; line-height: 1.7; }
+.page-section li { margin-bottom: 4px; }
+
+details.faq-item {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  margin-bottom: 10px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.03);
+}
+details.faq-item summary {
+  cursor: pointer;
+  padding: 14px 40px 14px 15px;
+  font-weight: 600;
+  color: #fff;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  list-style: none;
+  position: relative;
+}
+details.faq-item summary::-webkit-details-marker { display: none; }
+details.faq-item summary::after {
+  content: '+';
+  position: absolute;
+  right: 15px; top: 50%;
+  transform: translateY(-50%);
+  color: var(--gold);
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+details.faq-item[open] summary::after { content: '−'; }
+details.faq-item p {
+  margin: 0;
+  padding: 0 15px 14px;
+  color: #bcd6cb;
+  font-size: 0.85rem;
+  line-height: 1.55;
+}
+
+.page-note {
+  margin: 16px 0 0;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: rgba(246, 185, 59, 0.1);
+  border: 1px solid rgba(246, 185, 59, 0.2);
+  color: #e6c98a;
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
+.vip-tier {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: 10px;
+  background: rgba(255, 255, 255, 0.03);
+}
+.vip-tier-badge {
+  width: 46px; height: 46px;
+  border-radius: 50%;
+  display: grid; place-items: center;
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+.vip-tier-info b { color: #fff; font-size: 0.92rem; }
+.vip-tier-info p { margin: 2px 0 0; color: #9fbcae; font-size: 0.8rem; line-height: 1.4; }

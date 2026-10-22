@@ -1,0 +1,26 @@
+{
+  "name": "kouz-hous",
+  "version": "1.0.0",
+  "description": "KOUZ HOUS — Plateforme d'investissement FCFA / Mobile Money",
+  "main": "src/server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js"
+  },
+  "keywords": [
+    "kouz-hous",
+    "investissement",
+    "mobile-money",
+    "fcfa"
+  ],
+  "author": "KOUZ HOUS",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "pg": "^8.12.0"
+  }
+}

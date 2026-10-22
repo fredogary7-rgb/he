@@ -1,0 +1,16 @@
+# Dépendances
+node_modules/
+
+# Environnement (contient des secrets)
+.env
+
+# Logs
+*.log
+npm-debug.log*
+
+# Runtime
+.server.pid
+
+# OS
+.DS_Store
+Thumbs.db

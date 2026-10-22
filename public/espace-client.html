@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Service client — KOUZ HOUS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/page.css" />
+  <link rel="stylesheet" href="/css/chat.css" />
+</head>
+<body class="page-body chat-body">
+  <header class="page-topbar">
+    <a href="/dashboard" class="page-back">← Retour</a>
+    <h1>Service client</h1>
+  </header>
+
+  <div class="chat-wrap">
+    <div class="chat-messages" id="chat-messages"></div>
+    <div class="chat-preview" id="chat-preview"></div>
+    <div class="chat-inputbar">
+      <button type="button" class="chat-btn" id="chat-attach" title="Envoyer une image">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+      </button>
+      <input type="text" id="chat-text" placeholder="Écrivez votre message…" />
+      <button type="button" class="chat-btn send" id="chat-send">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+      <input type="file" id="chat-image" accept="image/*" hidden />
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var msgList = document.getElementById('chat-messages');
+      var textInput = document.getElementById('chat-text');
+      var imageInput = document.getElementById('chat-image');
+      var attachBtn = document.getElementById('chat-attach');
+      var sendBtn = document.getElementById('chat-send');
+      var pendingImage = null;
+      var lastId = 0;
+
+      function esc(s) {
+        return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
+          return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+        });
+      }
+
+      function render(messages) {
+        if (!messages.length) {
+          msgList.innerHTML = '<div class="chat-empty">Écrivez votre premier message au service client.</div>';
+          return;
+        }
+        msgList.innerHTML = messages.map(function (m) {
+          var time = new Date(m.createdAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+          var img = m.imageUrl ? '<img src="' + m.imageUrl + '" alt="image" />' : '';
+          var text = m.content ? '<div>' + esc(m.content) + '</div>' : '';
+          return '<div class="chat-msg ' + m.sender + '">' + text + img + '<div class="meta">' + time + '</div></div>';
+        }).join('');
+        msgList.scrollTop = msgList.scrollHeight;
+      }
+
+      async function load() {
+        try {
+          var res = await fetch('/api/messages');
+          if (res.status === 401) { window.location.href = '/login'; return; }
+          var data = await res.json();
+          var messages = data.messages || [];
+          var newLast = messages.length ? messages[messages.length - 1].id : 0;
+          if (newLast !== lastId) { lastId = newLast; render(messages); }
+        } catch (e) {}
+      }
+
+      function clearPreview() {
+        var p = document.getElementById('chat-preview');
+        p.innerHTML = '';
+        p.style.display = 'none';
+      }
+
+      function compressImage(file, maxSize) {
+        return new Promise(function (resolve, reject) {
+          var reader = new FileReader();
+          reader.onload = function (e) {
+            var img = new Image();
+            img.onload = function () {
+              var w = img.width, h = img.height;
+              if (w > h && w > maxSize) { h = Math.round(h * maxSize / w); w = maxSize; }
+              else if (h > maxSize) { w = Math.round(w * maxSize / h); h = maxSize; }
+              var canvas = document.createElement('canvas');
+              canvas.width = w; canvas.height = h;
+              canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+              resolve(canvas.toDataURL('image/jpeg', 0.7));
+            };
+            img.onerror = reject;
+            img.src = e.target.result;
+          };
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+      }
+
+      async function send() {
+        var text = textInput.value.trim();
+        if (!text && !pendingImage) return;
+        sendBtn.disabled = true;
+        try {
+          var res = await fetch('/api/messages', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ content: text, image: pendingImage }),
+          });
+          var data = await res.json();
+          if (!res.ok) { alert(data.error || "Envoi impossible."); return; }
+          textInput.value = '';
+          pendingImage = null;
+          clearPreview();
+          lastId = 0;
+          await load();
+        } catch (e) {
+          alert('Erreur réseau.');
+        } finally {
+          sendBtn.disabled = false;
+        }
+      }
+
+      attachBtn.addEventListener('click', function () { imageInput.click(); });
+      imageInput.addEventListener('change', async function () {
+        var file = imageInput.files[0];
+        if (!file) return;
+        try {
+          pendingImage = await compressImage(file, 800);
+          var p = document.getElementById('chat-preview');
+          p.innerHTML = '<img src="' + pendingImage + '" alt="aperçu" /><button type="button" id="chat-preview-remove">✕</button>';
+          p.style.display = 'flex';
+          document.getElementById('chat-preview-remove').addEventListener('click', function () {
+            pendingImage = null; clearPreview();
+          });
+        } catch (e) { alert('Image illisible.'); }
+      });
+      sendBtn.addEventListener('click', send);
+      textInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') send(); });
+
+      load();
+      setInterval(load, 5000);
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Connexion — KOUZ HOUS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <div class="auth-layout">
+    <aside class="auth-visual">
+      <div class="slideshow">
+        <img class="slide active" src="/images/moto3.jpg" alt="" />
+        <img class="slide" src="/images/rol1.jpg" alt="" />
+        <img class="slide" src="/images/moto4.jpg" alt="" />
+        <img class="slide" src="/images/pous2.jpg" alt="" />
+        <img class="slide" src="/images/vent.jpg" alt="" />
+        <img class="slide" src="/images/casque.jpg" alt="" />
+      </div>
+      <div class="auth-visual-overlay"></div>
+      <div class="auth-brand">
+        <div class="brand-logo">K</div>
+        <h1 class="brand-title">KOUZ <span class="accent">HOUS</span></h1>
+        <p class="brand-tagline">Retrouvez votre compte et continuez à faire fructifier votre capital.</p>
+        <div class="brand-badges">
+          <span class="badge"><span class="dot"></span> Mobile Money</span>
+          <span class="badge"><span class="dot"></span> FCFA sécurisé</span>
+          <span class="badge"><span class="dot"></span> Support 24/7</span>
+        </div>
+      </div>
+    </aside>
+
+    <main class="auth-form-panel">
+      <div class="auth-form-inner">
+        <div class="auth-form-head">
+          <h2>Connexion</h2>
+          <p>Heureux de vous revoir sur KOUZ HOUS.</p>
+        </div>
+
+        <form id="login-form" novalidate>
+          <div class="field">
+            <label for="country">Pays</label>
+            <select class="control" id="country" name="country" required></select>
+          </div>
+
+          <div class="field">
+            <label for="phone">Numéro de téléphone</label>
+            <div class="phone-group">
+              <span class="phone-prefix" id="phone-prefix">+228</span>
+              <input class="control" type="tel" id="phone" name="phone" placeholder="90 12 34 56" autocomplete="tel" required />
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="password">Mot de passe</label>
+            <div class="password-wrap">
+              <input class="control" type="password" id="password" name="password" placeholder="••••••••" autocomplete="current-password" required />
+              <button type="button" class="toggle-pass" aria-label="Afficher le mot de passe">👁</button>
+            </div>
+          </div>
+
+          <label class="checkbox">
+            <input type="checkbox" id="remember-me" name="remember-me" />
+            <span>Se souvenir de moi</span>
+          </label>
+
+          <button type="submit" class="btn-primary" id="submit-btn">Se connecter</button>
+          <p class="form-message" id="form-message"></p>
+        </form>
+
+        <p class="auth-switch">Pas encore de compte ? <a href="/register">Créer un compte</a></p>
+      </div>
+    </main>
+  </div>
+
+  <script src="/js/common.js"></script>
+  <script src="/js/login.js"></script>
+</body>
+</html>
