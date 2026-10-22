@@ -2,7 +2,7 @@ const express = require('express');
 const crypto = require('crypto');
 const { pool } = require('../db');
 const { COUNTRY_NAMES, WITHDRAWAL_SERVICES, WITHDRAWAL_RULES } = require('../countries');
-const { notifyUser } = require('../notify');
+const { notifyUser, notifyAdmins } = require('../notify');
 
 const router = express.Router();
 
@@ -138,6 +138,35 @@ router.post('/withdraw', async (req, res) => {
     });
   } catch (err) {
     console.error('[wallet:withdraw]', err);
+    return res.status(500).json({ error: 'Erreur serveur.' });
+  }
+});
+
+// Demande de dépôt (Mobile Money) — en attente de validation admin.
+router.post('/deposit', async (req, res) => {
+  const userId = req.session.userId;
+  const { amount, phone, service, country } = req.body || {};
+  const amt = Number(amount);
+  if (!Number.isFinite(amt) || amt <= 0) return res.status(400).json({ error: 'Montant invalide.' });
+  if (amt < 2500) return res.status(400).json({ error: 'Le dépôt minimum est de 2 500 FCFA.' });
+  const p = normalizePhone(phone);
+  if (!isValidPhone(p)) return res.status(400).json({ error: 'Numéro de portefeuille invalide.' });
+  if (!COUNTRY_NAMES.includes(country)) return res.status(400).json({ error: 'Pays invalide.' });
+
+  try {
+    const reference = 'DEP' + Date.now().toString() + crypto.randomBytes(2).toString('hex').toUpperCase();
+    await pool.query(
+      "INSERT INTO transactions (user_id, type, amount, status, reference, details) VALUES ($1, 'deposit', $2, 'pending', $3, $4)",
+      [userId, amt, reference, JSON.stringify({ phone: p, service: service || 'Mobile Money', country })]
+    );
+    await notifyAdmins('Nouvelle demande de dépôt', `Un dépôt de ${amt} FCFA est en attente de validation.`, 'info');
+    return res.status(201).json({
+      success: true,
+      message: 'Demande de dépôt enregistrée. En attente de validation.',
+      reference,
+    });
+  } catch (err) {
+    console.error('[wallet:deposit]', err);
     return res.status(500).json({ error: 'Erreur serveur.' });
   }
 });

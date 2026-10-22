@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/css/page.css" />
+  <link rel="stylesheet" href="/css/admin.css" />
 </head>
 <body class="page-body">
   <header class="page-topbar">
@@ -15,8 +16,72 @@
     <h1>Dépôt</h1>
   </header>
   <main class="page-content">
-    <div class="page-section"><h2>Comment déposer</h2><p>Rechargez votre solde dépôt via Mobile Money pour pouvoir investir dans nos produits.</p></div>
-    <div class="page-section"><h2>Conditions</h2><ul><li>Dépôt minimum : 2 500 FCFA.</li><li>Le montant est crédité sur votre solde dépôt après validation.</li></ul></div>
+    <div class="page-section">
+      <h2>Faire un dépôt</h2>
+      <p>Envoyez votre demande de dépôt Mobile Money. Elle sera validée par notre équipe puis créditée sur votre solde.</p>
+    </div>
+    <div class="admin-field">
+      <label>Montant (FCFA)</label>
+      <input type="number" id="deposit-amount" min="2500" placeholder="Minimum 2 500 FCFA" />
+    </div>
+    <div class="admin-field">
+      <label>Pays</label>
+      <select id="deposit-country"></select>
+    </div>
+    <div class="admin-field">
+      <label>Numéro Mobile Money</label>
+      <input type="tel" id="deposit-phone" placeholder="Ex : 90 12 34 56" />
+    </div>
+    <button type="button" id="deposit-submit" class="deposit-submit">Envoyer la demande</button>
+    <p id="deposit-status" class="deposit-status"></p>
   </main>
+
+  <style>
+    .deposit-submit { width: 100%; height: 50px; border: none; border-radius: 13px; background: linear-gradient(135deg, var(--gold), #f6c45e); color: #06231b; font-family: inherit; font-size: 0.95rem; font-weight: 700; cursor: pointer; }
+    .deposit-submit:disabled { opacity: 0.6; }
+    .deposit-status { text-align: center; font-size: 0.85rem; margin-top: 12px; color: #f0a9ab; min-height: 1.2em; }
+  </style>
+
+  <script src="/js/common.js"></script>
+  <script>
+    (function () {
+      var sel = document.getElementById('deposit-country');
+      (KOUZ.countries || []).forEach(function (c) {
+        var o = document.createElement('option');
+        o.value = c.name;
+        o.textContent = c.flag + ' ' + c.name;
+        sel.appendChild(o);
+      });
+
+      document.getElementById('deposit-submit').addEventListener('click', async function () {
+        var statusEl = document.getElementById('deposit-status');
+        var amount = Number(document.getElementById('deposit-amount').value);
+        var country = document.getElementById('deposit-country').value;
+        var phone = document.getElementById('deposit-phone').value.trim();
+        statusEl.textContent = '';
+        if (!amount || amount < 2500) { statusEl.textContent = 'Montant minimum : 2 500 FCFA.'; return; }
+        if (!country) { statusEl.textContent = 'Choisissez un pays.'; return; }
+        if (!/^\+?\d{8,15}$/.test(phone.replace(/[\s\-().]/g, ''))) { statusEl.textContent = 'Numéro invalide.'; return; }
+
+        var btn = document.getElementById('deposit-submit');
+        btn.disabled = true;
+        try {
+          var res = await fetch('/api/wallet/deposit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ amount: amount, country: country, phone: phone }),
+          });
+          if (res.status === 401) { window.location.href = '/login'; return; }
+          var data = await res.json();
+          if (!res.ok) { statusEl.textContent = data.error || 'Erreur.'; return; }
+          statusEl.style.color = 'var(--green-400)';
+          statusEl.textContent = data.message + ' Réf : ' + data.reference;
+          document.getElementById('deposit-amount').value = '';
+          document.getElementById('deposit-phone').value = '';
+        } catch (e) { statusEl.textContent = 'Erreur réseau.'; }
+        finally { btn.disabled = false; }
+      });
+    })();
+  </script>
 </body>
 </html>

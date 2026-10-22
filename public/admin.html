@@ -9,8 +9,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/css/page.css" />
   <link rel="stylesheet" href="/css/chat.css" />
+  <link rel="stylesheet" href="/css/admin.css" />
 </head>
-<body class="page-body chat-body">
+<body class="page-body">
   <header class="page-topbar">
     <a href="/dashboard" class="page-back">← Dashboard</a>
     <h1>Administration</h1>
@@ -23,26 +24,69 @@
     <p id="admin-login-error" style="color:#f0a9ab;font-size:0.8rem;margin:0"></p>
   </div>
 
-  <div class="chat-wrap" id="admin-panel" style="display:none">
-    <div id="conv-view">
-      <ul class="conv-list" id="conv-list"></ul>
-    </div>
+  <div class="admin-panel" id="admin-panel" style="display:none">
+    <nav class="admin-tabs" id="admin-tabs">
+      <button type="button" class="admin-tab-btn active" data-tab="overview">Vue d'ensemble</button>
+      <button type="button" class="admin-tab-btn" data-tab="users">Utilisateurs</button>
+      <button type="button" class="admin-tab-btn" data-tab="deposits">Dépôts <span class="badge" id="deposits-badge" style="display:none">0</span></button>
+      <button type="button" class="admin-tab-btn" data-tab="withdrawals">Retraits <span class="badge" id="withdrawals-badge" style="display:none">0</span></button>
+      <button type="button" class="admin-tab-btn" data-tab="messages">Messages</button>
+    </nav>
 
-    <div class="admin-chat-head" id="admin-chat-head" style="display:none">
-      <button type="button" id="admin-back-to-list">← Retour</button>
-      <b id="admin-chat-user"></b>
+    <div class="admin-content">
+      <div class="admin-tab active" id="tab-overview">
+        <div class="admin-stats" id="admin-stats"></div>
+      </div>
+
+      <div class="admin-tab" id="tab-users">
+        <input type="search" class="admin-search" id="users-search" placeholder="Rechercher un numéro ou un pays…" />
+        <div class="admin-list" id="users-list"></div>
+      </div>
+
+      <div class="admin-tab" id="tab-deposits">
+        <div class="admin-list" id="deposits-list"></div>
+      </div>
+
+      <div class="admin-tab" id="tab-withdrawals">
+        <div class="admin-list" id="withdrawals-list"></div>
+      </div>
+
+      <div class="admin-tab" id="tab-messages">
+        <div id="conv-view">
+          <ul class="conv-list" id="conv-list"></ul>
+        </div>
+        <div class="admin-chat-head" id="admin-chat-head" style="display:none">
+          <button type="button" id="admin-back-to-list">← Retour</button>
+          <b id="admin-chat-user"></b>
+        </div>
+        <div class="chat-messages" id="admin-messages" style="display:none"></div>
+        <div class="chat-preview" id="admin-preview"></div>
+        <div class="chat-inputbar" id="admin-inputbar" style="display:none">
+          <button type="button" class="chat-btn" id="admin-attach" title="Envoyer une image">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+          </button>
+          <input type="text" id="admin-text" placeholder="Répondre…" />
+          <button type="button" class="chat-btn send" id="admin-send">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+          <input type="file" id="admin-image" accept="image/*" hidden />
+        </div>
+      </div>
     </div>
-    <div class="chat-messages" id="admin-messages" style="display:none"></div>
-    <div class="chat-preview" id="admin-preview"></div>
-    <div class="chat-inputbar" id="admin-inputbar" style="display:none">
-      <button type="button" class="chat-btn" id="admin-attach" title="Envoyer une image">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
-      </button>
-      <input type="text" id="admin-text" placeholder="Répondre…" />
-      <button type="button" class="chat-btn send" id="admin-send">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-      </button>
-      <input type="file" id="admin-image" accept="image/*" hidden />
+  </div>
+
+  <div class="admin-modal" id="admin-modal" aria-hidden="true">
+    <div class="admin-modal-backdrop" id="admin-modal-backdrop"></div>
+    <div class="admin-modal-dialog" role="dialog" aria-modal="true">
+      <h3 id="admin-modal-title">Opération</h3>
+      <div class="admin-field"><label>Type</label><select id="admin-modal-type"><option value="credit">Créditer</option><option value="debit">Débiter</option></select></div>
+      <div class="admin-field"><label>Montant (FCFA)</label><input type="number" id="admin-modal-amount" min="1" /></div>
+      <div class="admin-field"><label>Solde</label><select id="admin-modal-balance"><option value="depot">Dépôt</option><option value="revenu">Revenu</option></select></div>
+      <div class="admin-field"><label>Note (optionnel)</label><input type="text" id="admin-modal-note" placeholder="Ex : correction" /></div>
+      <div class="admin-modal-actions">
+        <button type="button" class="admin-modal-cancel" id="admin-modal-cancel">Annuler</button>
+        <button type="button" class="admin-modal-confirm" id="admin-modal-confirm">Confirmer</button>
+      </div>
     </div>
   </div>
 
@@ -50,58 +94,34 @@
     (function () {
       var loginView = document.getElementById('admin-login');
       var panel = document.getElementById('admin-panel');
-      var convView = document.getElementById('conv-view');
-      var convList = document.getElementById('conv-list');
-      var chatHead = document.getElementById('admin-chat-head');
-      var chatUser = document.getElementById('admin-chat-user');
-      var msgEl = document.getElementById('admin-messages');
-      var inputbar = document.getElementById('admin-inputbar');
-      var textInput = document.getElementById('admin-text');
-      var imageInput = document.getElementById('admin-image');
-      var attachBtn = document.getElementById('admin-attach');
-      var sendBtn = document.getElementById('admin-send');
-      var preview = document.getElementById('admin-preview');
       var logoutBtn = document.getElementById('admin-logout');
       var currentUserId = null;
       var pendingImage = null;
       var lastMsgId = 0;
 
+      function fmt(n) { return Number(n || 0).toLocaleString('fr-FR'); }
       function esc(s) {
         return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
           return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
         });
       }
 
-      function renderMessages(list) {
-        if (!list.length) {
-          msgEl.innerHTML = '<div class="chat-empty">Aucun message.</div>';
-          return;
-        }
-        msgEl.innerHTML = list.map(function (m) {
-          var time = new Date(m.createdAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-          var img = m.imageUrl ? '<img src="' + m.imageUrl + '" alt="image" />' : '';
-          var text = m.content ? '<div>' + esc(m.content) + '</div>' : '';
-          return '<div class="chat-msg ' + m.sender + '">' + text + img + '<div class="meta">' + time + '</div></div>';
-        }).join('');
-        msgEl.scrollTop = msgEl.scrollHeight;
-      }
+      function showLogin() { loginView.style.display = 'flex'; panel.style.display = 'none'; logoutBtn.style.display = 'none'; }
+      function showPanel() { loginView.style.display = 'none'; panel.style.display = 'flex'; logoutBtn.style.display = 'inline-flex'; }
 
-      function showLogin() {
-        loginView.style.display = 'flex';
-        panel.style.display = 'none';
-        logoutBtn.style.display = 'none';
-      }
-      function showPanel() {
-        loginView.style.display = 'none';
-        panel.style.display = 'flex';
-        logoutBtn.style.display = 'inline-flex';
+      function loadAll() {
+        loadStats();
+        loadUsers(document.getElementById('users-search').value);
+        loadTransactions('deposit', null, 'deposits-list');
+        loadTransactions('withdrawal', null, 'withdrawals-list');
+        loadConversations();
       }
 
       async function checkStatus() {
         try {
           var res = await fetch('/api/admin/status');
           var data = await res.json();
-          if (data.isAdmin) { showPanel(); loadConversations(); } else { showLogin(); }
+          if (data.isAdmin) { showPanel(); loadAll(); } else { showLogin(); }
         } catch (e) { showLogin(); }
       }
 
@@ -119,8 +139,177 @@
           if (!res.ok) { errEl.textContent = data.error || 'Erreur.'; return; }
           document.getElementById('admin-password').value = '';
           showPanel();
-          loadConversations();
+          loadAll();
         } catch (e) { errEl.textContent = 'Erreur réseau.'; }
+      }
+
+      logoutBtn.addEventListener('click', async function () {
+        await fetch('/api/admin/logout', { method: 'POST' });
+        showLogin();
+      });
+
+      // Tabs
+      var tabs = document.querySelectorAll('.admin-tab-btn');
+      tabs.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          tabs.forEach(function (b) { b.classList.remove('active'); });
+          btn.classList.add('active');
+          document.querySelectorAll('.admin-tab').forEach(function (t) { t.classList.remove('active'); });
+          document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+          if (btn.dataset.tab === 'overview') loadStats();
+          if (btn.dataset.tab === 'users') loadUsers(document.getElementById('users-search').value);
+          if (btn.dataset.tab === 'deposits') loadTransactions('deposit', null, 'deposits-list');
+          if (btn.dataset.tab === 'withdrawals') loadTransactions('withdrawal', null, 'withdrawals-list');
+          if (btn.dataset.tab === 'messages') loadConversations();
+        });
+      });
+
+      async function loadStats() {
+        try {
+          var res = await fetch('/api/admin/stats');
+          var s = await res.json();
+          document.getElementById('admin-stats').innerHTML =
+            '<div class="admin-stat"><b>' + s.users + '</b><span>Utilisateurs</span></div>' +
+            '<div class="admin-stat"><b>' + fmt(s.depot) + '</b><span>Total dépôt</span></div>' +
+            '<div class="admin-stat"><b>' + fmt(s.revenu) + '</b><span>Total revenu</span></div>' +
+            '<div class="admin-stat"><b>' + s.pendingDeposits + '</b><span>Dépôts en attente</span></div>' +
+            '<div class="admin-stat"><b>' + s.pendingWithdrawals + '</b><span>Retraits en attente</span></div>';
+          document.getElementById('deposits-badge').textContent = s.pendingDeposits;
+          document.getElementById('deposits-badge').style.display = s.pendingDeposits > 0 ? 'inline' : 'none';
+          document.getElementById('withdrawals-badge').textContent = s.pendingWithdrawals;
+          document.getElementById('withdrawals-badge').style.display = s.pendingWithdrawals > 0 ? 'inline' : 'none';
+        } catch (e) {}
+      }
+
+      async function loadUsers(q) {
+        try {
+          var res = await fetch('/api/admin/users' + (q ? '?q=' + encodeURIComponent(q) : ''));
+          var data = await res.json();
+          var list = data.users || [];
+          if (!list.length) { document.getElementById('users-list').innerHTML = '<div class="empty">Aucun utilisateur.</div>'; return; }
+          document.getElementById('users-list').innerHTML = list.map(function (u) {
+            var adminTag = u.is_admin ? ' <span class="admin-badge admin">Admin</span>' : '';
+            return '<div class="admin-row">' +
+              '<div class="admin-row-main"><b>' + u.phone + adminTag + '</b><span>' + u.country + ' · Dépôt ' + fmt(u.depot) + ' · Revenu ' + fmt(u.revenu) + '</span></div>' +
+              '<div class="admin-row-actions">' +
+              '<button class="admin-btn credit" data-act="credit" data-id="' + u.id + '">+ Crédit</button>' +
+              '<button class="admin-btn debit" data-act="debit" data-id="' + u.id + '">− Débit</button>' +
+              '<button class="admin-btn ghost" data-act="admin" data-id="' + u.id + '" data-admin="' + (u.is_admin ? '0' : '1') + '">' + (u.is_admin ? 'Retirer admin' : 'Promouvoir') + '</button>' +
+              '</div></div>';
+          }).join('');
+          document.querySelectorAll('#users-list .admin-btn').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+              var id = btn.dataset.id;
+              if (btn.dataset.act === 'admin') { toggleAdmin(id, btn.dataset.admin === '1'); return; }
+              openOpModal(id, btn.dataset.act);
+            });
+          });
+        } catch (e) {}
+      }
+
+      var opUserId = null;
+      function openOpModal(userId, type) {
+        opUserId = userId;
+        document.getElementById('admin-modal-title').textContent = type === 'credit' ? "Créditer l'utilisateur" : "Débiter l'utilisateur";
+        document.getElementById('admin-modal-type').value = type;
+        document.getElementById('admin-modal-amount').value = '';
+        document.getElementById('admin-modal-note').value = '';
+        document.getElementById('admin-modal').classList.add('open');
+      }
+      function closeOpModal() { document.getElementById('admin-modal').classList.remove('open'); }
+
+      async function submitOp() {
+        var type = document.getElementById('admin-modal-type').value;
+        var amount = Number(document.getElementById('admin-modal-amount').value);
+        var balance = document.getElementById('admin-modal-balance').value;
+        var note = document.getElementById('admin-modal-note').value;
+        if (!amount || amount <= 0) { alert('Montant invalide.'); return; }
+        try {
+          var res = await fetch('/api/admin/users/' + opUserId + '/' + type, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ amount: amount, balance: balance, note: note }),
+          });
+          var data = await res.json();
+          if (!res.ok) { alert(data.error || 'Erreur.'); return; }
+          closeOpModal();
+          loadUsers(document.getElementById('users-search').value);
+          loadStats();
+        } catch (e) { alert('Erreur réseau.'); }
+      }
+
+      async function toggleAdmin(id, isAdmin) {
+        try {
+          await fetch('/api/admin/users/' + id + '/toggle-admin', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ isAdmin: isAdmin }) });
+          loadUsers(document.getElementById('users-search').value);
+        } catch (e) {}
+      }
+
+      async function loadTransactions(type, status, containerId) {
+        try {
+          var res = await fetch('/api/admin/transactions?type=' + (type || 'all') + (status ? '&status=' + status : ''));
+          var data = await res.json();
+          var list = data.transactions || [];
+          var el = document.getElementById(containerId);
+          if (!list.length) { el.innerHTML = '<div class="empty">Aucune opération.</div>'; return; }
+          el.innerHTML = list.map(function (t) {
+            var d = t.details || {};
+            var info = d.phone ? ' · ' + d.phone : '';
+            var actions = '';
+            if (t.status === 'pending') {
+              actions = '<button class="admin-btn approve" data-act="approve" data-id="' + t.id + '">✓ Valider</button>' +
+                        '<button class="admin-btn reject" data-act="reject" data-id="' + t.id + '">✕ Rejeter</button>';
+            }
+            return '<div class="admin-row">' +
+              '<div class="admin-row-main"><b>' + fmt(t.amount) + ' FCFA — ' + t.phone + '</b><span>' + t.country + info + ' · ' + new Date(t.created_at).toLocaleString('fr-FR') + '</span></div>' +
+              '<span class="admin-badge ' + t.status + '">' + t.status + '</span>' +
+              '<div class="admin-row-actions">' + actions + '</div></div>';
+          }).join('');
+          el.querySelectorAll('.admin-btn[data-act]').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+              if (btn.dataset.act === 'approve') approveTx(btn.dataset.id, type, containerId);
+              else rejectTx(btn.dataset.id, type, containerId);
+            });
+          });
+        } catch (e) {}
+      }
+
+      async function approveTx(id, type, containerId) {
+        try {
+          var res = await fetch('/api/admin/transactions/' + id + '/approve', { method: 'POST' });
+          if (!res.ok) { alert((await res.json()).error || 'Erreur.'); return; }
+          loadTransactions(type, null, containerId);
+          loadStats();
+        } catch (e) {}
+      }
+      async function rejectTx(id, type, containerId) {
+        try {
+          var res = await fetch('/api/admin/transactions/' + id + '/reject', { method: 'POST' });
+          if (!res.ok) { alert((await res.json()).error || 'Erreur.'); return; }
+          loadTransactions(type, null, containerId);
+          loadStats();
+        } catch (e) {}
+      }
+
+      var msgEl = document.getElementById('admin-messages');
+      var chatHead = document.getElementById('admin-chat-head');
+      var chatUser = document.getElementById('admin-chat-user');
+      var inputbar = document.getElementById('admin-inputbar');
+      var textInput = document.getElementById('admin-text');
+      var imageInput = document.getElementById('admin-image');
+      var attachBtn = document.getElementById('admin-attach');
+      var sendBtn = document.getElementById('admin-send');
+      var preview = document.getElementById('admin-preview');
+
+      function renderMessages(list) {
+        if (!list.length) { msgEl.innerHTML = '<div class="chat-empty">Aucun message.</div>'; return; }
+        msgEl.innerHTML = list.map(function (m) {
+          var time = new Date(m.createdAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+          var img = m.imageUrl ? '<img src="' + m.imageUrl + '" alt="image" />' : '';
+          var text = m.content ? '<div>' + esc(m.content) + '</div>' : '';
+          return '<div class="chat-msg ' + m.sender + '">' + text + img + '<div class="meta">' + time + '</div></div>';
+        }).join('');
+        msgEl.scrollTop = msgEl.scrollHeight;
       }
 
       async function loadConversations() {
@@ -129,20 +318,15 @@
           if (res.status === 401) { showLogin(); return; }
           var data = await res.json();
           var convs = data.conversations || [];
-          if (!convs.length) {
-            convList.innerHTML = '<li class="conv-item"><span style="color:#7e958b;font-size:0.85rem">Aucun message pour le moment.</span></li>';
-            return;
-          }
-          convList.innerHTML = convs.map(function (c) {
+          var el = document.getElementById('conv-list');
+          if (!convs.length) { el.innerHTML = '<li class="conv-item"><span style="color:#7e958b;font-size:0.85rem">Aucun message.</span></li>'; return; }
+          el.innerHTML = convs.map(function (c) {
             var initials = (c.country || '?').slice(0, 1).toUpperCase();
             var preview = c.lastContent || (c.lastImage ? '🖼 Image' : '');
             var unread = c.unread > 0 ? '<span class="conv-unread">' + c.unread + '</span>' : '';
-            return '<li class="conv-item" data-id="' + c.userId + '">' +
-              '<span class="conv-avatar">' + initials + '</span>' +
-              '<div class="conv-info"><b>' + c.phone + '</b><span>' + esc(preview) + '</span></div>' +
-              unread + '</li>';
+            return '<li class="conv-item" data-id="' + c.userId + '"><span class="conv-avatar">' + initials + '</span><div class="conv-info"><b>' + c.phone + '</b><span>' + esc(preview) + '</span></div>' + unread + '</li>';
           }).join('');
-          convList.querySelectorAll('.conv-item[data-id]').forEach(function (item) {
+          el.querySelectorAll('.conv-item[data-id]').forEach(function (item) {
             item.addEventListener('click', function () { openConversation(parseInt(item.dataset.id, 10)); });
           });
         } catch (e) {}
@@ -151,23 +335,21 @@
       async function openConversation(userId) {
         currentUserId = userId;
         lastMsgId = 0;
-        convView.style.display = 'none';
+        document.getElementById('conv-view').style.display = 'none';
         chatHead.style.display = 'flex';
         msgEl.style.display = 'flex';
         inputbar.style.display = 'flex';
         chatUser.textContent = 'Conversation #' + userId;
         await loadMessages();
       }
-
       function backToList() {
         currentUserId = null;
         chatHead.style.display = 'none';
         msgEl.style.display = 'none';
         inputbar.style.display = 'none';
-        convView.style.display = 'block';
+        document.getElementById('conv-view').style.display = 'block';
         loadConversations();
       }
-
       async function loadMessages() {
         if (!currentUserId) return;
         try {
@@ -200,12 +382,7 @@
           reader.readAsDataURL(file);
         });
       }
-
-      function clearPreview() {
-        preview.innerHTML = '';
-        preview.style.display = 'none';
-      }
-
+      function clearPreview() { preview.innerHTML = ''; preview.style.display = 'none'; }
       async function sendReply() {
         if (!currentUserId) return;
         var text = textInput.value.trim();
@@ -225,19 +402,16 @@
           lastMsgId = 0;
           await loadMessages();
           await loadConversations();
-        } catch (e) {
-          alert('Erreur réseau.');
-        } finally {
-          sendBtn.disabled = false;
-        }
+        } catch (e) { alert('Erreur réseau.'); }
+        finally { sendBtn.disabled = false; }
       }
 
       document.getElementById('admin-login-btn').addEventListener('click', login);
       document.getElementById('admin-password').addEventListener('keydown', function (e) { if (e.key === 'Enter') login(); });
-      logoutBtn.addEventListener('click', async function () {
-        await fetch('/api/admin/logout', { method: 'POST' });
-        showLogin();
-      });
+      document.getElementById('users-search').addEventListener('input', function () { loadUsers(this.value); });
+      document.getElementById('admin-modal-cancel').addEventListener('click', closeOpModal);
+      document.getElementById('admin-modal-confirm').addEventListener('click', submitOp);
+      document.getElementById('admin-modal-backdrop').addEventListener('click', closeOpModal);
       document.getElementById('admin-back-to-list').addEventListener('click', backToList);
       attachBtn.addEventListener('click', function () { imageInput.click(); });
       imageInput.addEventListener('change', async function () {
@@ -247,9 +421,7 @@
           pendingImage = await compressImage(file, 800);
           preview.innerHTML = '<img src="' + pendingImage + '" alt="aperçu" /><button type="button" id="admin-preview-remove">✕</button>';
           preview.style.display = 'flex';
-          document.getElementById('admin-preview-remove').addEventListener('click', function () {
-            pendingImage = null; clearPreview();
-          });
+          document.getElementById('admin-preview-remove').addEventListener('click', function () { pendingImage = null; clearPreview(); });
         } catch (e) { alert('Image illisible.'); }
       });
       sendBtn.addEventListener('click', sendReply);
@@ -257,9 +429,10 @@
 
       checkStatus();
       setInterval(function () {
-        if (currentUserId) loadMessages();
-        loadConversations();
-      }, 5000);
+        loadStats();
+        var activeTab = document.querySelector('.admin-tab.active');
+        if (activeTab && activeTab.id === 'tab-messages') { loadConversations(); if (currentUserId) loadMessages(); }
+      }, 10000);
     })();
   </script>
 </body>
